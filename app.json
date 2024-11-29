@@ -9,15 +9,27 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "bundleIdentifier": "com.tribechat.task",
-      "supportsTablet": true
+      "bundleIdentifier": "com.ibrahimmesan.TribeChat",
+      "supportsTablet": true,
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "infoPlist": {
+        "NSAppTransportSecurity": { "NSAllowsArbitraryLoads": true },
+        "NSExceptionDomains": {
+          "dummy-chat-server.tribechat.pro": {
+            "NSExceptionAllowsInsecureHTTPLoads": true
+          }
+        }
+      }
     },
     "android": {
-      "package": "com.tribechat.task",
+      "package": "com.ibrahimmesan.TribeChat",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "usesCleartextTraffic": true
     },
     "web": {
       "bundler": "metro",

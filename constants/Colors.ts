@@ -73,29 +73,6 @@ export const AppColors = {
     19: "#31040f",
     20: "#180203",
   },
-  primary: {
-    0: "#e6faf4",
-    1: "#ccf5e8",
-    2: "#b3f1dc",
-    3: "#99ecd0",
-    4: "#80e8c4",
-    5: "#66e3b8",
-    6: "#4cdeac",
-    7: "#33dabf", // Lighter than base
-    8: "#1ad69c",
-    9: "#00bf7a", // Base color
-    10: "#00a567",
-    11: "#008b54",
-    12: "#007141",
-    13: "#00572e",
-    14: "#003d1b",
-    15: "#002308",
-    16: "#001a06",
-    17: "#001104",
-    18: "#000802",
-    19: "#000301",
-    20: "#000000", // Darkest shade
-  },
   green: {
     0: "#f0fff0",
     1: "#e0ffe0",
@@ -293,6 +270,7 @@ export const Colors = {
     icon: "#687076",
     tabIconDefault: "#687076",
     tabIconSelected: tintColorLight,
+    headerBackground: AppColors.green[0],
   },
   dark: {
     text: "#ECEDEE",
@@ -301,5 +279,6 @@ export const Colors = {
     icon: "#9BA1A6",
     tabIconDefault: "#9BA1A6",
     tabIconSelected: tintColorDark,
+    headerBackground: AppColors.gray[18],
   },
 };

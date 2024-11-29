@@ -1,4 +1,4 @@
-package com.tribechat.task
+package com.ibrahimmesan.TribeChat
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build
