@@ -1,46 +1,16 @@
-import { useState, useRef, useCallback, useMemo } from "react";
+import { useState, useRef, useMemo, useCallback } from "react";
 import { StyleSheet, ActivityIndicator } from "react-native";
 import { FlashList } from "@shopify/flash-list";
-import { MessageJSON } from "@/types/chat";
 import { useChat } from "@/hooks/useChat";
 import { MessageGroup } from "@/components/ui/message/MessageGroup";
 import { MessageInput } from "@/components/ui/message/MessageInput";
 import { ThemedView } from "@/components/ui/themed/ThemedView";
+import { groupMessages } from "@/utils/groupMessages";
 
 export const ChatRoomScreen = () => {
   const { messages, participants, isLoading, loadOlderMessages } = useChat();
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const flashListRef = useRef(null);
-
-  const groupMessages = useCallback(() => {
-    const groups: MessageJSON[][] = [];
-    let currentGroup: MessageJSON[] = [];
-
-    messages.forEach((message, index) => {
-      const previousMessage = messages[index - 1];
-      const timeDiff = previousMessage
-        ? message.sentAt - previousMessage.sentAt
-        : 0;
-
-      if (
-        currentGroup.length === 0 ||
-        (currentGroup[0].authorUuid === message.authorUuid && timeDiff < 300000) // 5 minutes
-      ) {
-        currentGroup.push(message);
-      } else {
-        if (currentGroup.length > 0) {
-          groups.push([...currentGroup]);
-        }
-        currentGroup = [message];
-      }
-    });
-
-    if (currentGroup.length > 0) {
-      groups.push(currentGroup);
-    }
-
-    return groups;
-  }, [messages]);
 
   const handleLoadMore = useCallback(async () => {
     if (messages.length === 0 || isLoadingMore) return;
@@ -52,7 +22,9 @@ export const ChatRoomScreen = () => {
       console.error("Error loading more messages:", error);
     }
     setIsLoadingMore(false);
-  }, [messages]);
+  }, [isLoadingMore, loadOlderMessages, messages]);
+
+  const messageGroups = useMemo(() => groupMessages(messages), [messages]);
 
   if (isLoading) {
     return (
@@ -61,8 +33,6 @@ export const ChatRoomScreen = () => {
       </ThemedView>
     );
   }
-
-  const messageGroups = groupMessages();
 
   return (
     <ThemedView style={styles.container}>

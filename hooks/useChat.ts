@@ -44,17 +44,7 @@ export const useChat = () => {
 
   // Send message mutation
   const sendMessageMutation = useMutation({
-    mutationFn: async ({
-      text,
-      imageUri,
-    }: {
-      text: string;
-      imageUri?: string;
-    }) => {
-      if (imageUri) {
-        const attachment = await chatApi.uploadImage(imageUri);
-        return chatApi.sendMessageWithAttachment(text, attachment);
-      }
+    mutationFn: async ({ text }: { text: string }) => {
       return chatApi.sendMessage(text);
     },
     onSuccess: (newMessage) => {

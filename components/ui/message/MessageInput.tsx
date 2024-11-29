@@ -44,9 +44,8 @@ export const MessageInput = () => {
     if ((!text.trim() && !selectedImage) || isSending) return;
 
     try {
-      await sendMessage({
+      sendMessage({
         text: text.trim(),
-        imageUri: selectedImage || undefined,
       });
       setText("");
       setSelectedImage(null);

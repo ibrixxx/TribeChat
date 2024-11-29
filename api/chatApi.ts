@@ -1,5 +1,4 @@
-import { MessageAttachment, MessageJSON, Participant } from "@/types/chat";
-import * as FileSystem from "expo-file-system";
+import { MessageJSON, Participant } from "@/types/chat";
 import axios from "axios";
 
 const API_BASE = "http://dummy-chat-server.tribechat.pro/api";
@@ -62,38 +61,8 @@ export const chatApi = {
     return data;
   },
 
-  uploadImage: async (uri: string): Promise<MessageAttachment> => {
-    try {
-      const base64 = await FileSystem.readAsStringAsync(uri, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-
-      return {
-        uuid: Date.now().toString(),
-        type: "image",
-        url: uri,
-        width: 800,
-        height: 600,
-      };
-    } catch (error) {
-      console.error("Error uploading image:", error);
-      throw new Error("Failed to upload image");
-    }
-  },
-
   sendMessage: async (text: string) => {
     const { data } = await api.post<MessageJSON>("/messages/new", { text });
-    return data;
-  },
-
-  sendMessageWithAttachment: async (
-    text: string,
-    attachment: MessageAttachment
-  ) => {
-    const { data } = await api.post<MessageJSON>("/messages/new", {
-      text,
-      attachments: [attachment],
-    });
     return data;
   },
 };
