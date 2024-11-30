@@ -64,6 +64,9 @@ export const useChat = () => {
       pages: data.pages.map((page) => [...page].reverse()),
       pageParams: data.pageParams,
     }),
+    retry: 2,
+    retryDelay: 1000,
+    networkMode: "online",
   });
 
   const { data: participants = [], isLoading: isLoadingParticipants } =
@@ -75,7 +78,10 @@ export const useChat = () => {
         return data;
       },
       enabled: !!sessionUuid,
-      refetchInterval: 10000,
+      refetchInterval: 60000,
+      retry: 2,
+      retryDelay: 1000,
+      networkMode: "online",
     });
 
   const loadOlderMessages = async () => {
