@@ -16,7 +16,14 @@ const PAGE_SIZE = 25;
 
 export const useChat = () => {
   const queryClient = useQueryClient();
-  const { sessionUuid, setSessionUuid } = useChatStore();
+  const {
+    sessionUuid,
+    setSessionUuid,
+    messages: offlineMessages,
+    participants: offlineParticipants,
+    addMessages,
+    setParticipants,
+  } = useChatStore();
 
   const { data: serverInfo } = useQuery({
     queryKey: ["serverInfo"],
@@ -36,9 +43,13 @@ export const useChat = () => {
       pageParam,
     }: QueryFunctionContext<string[], string | null>) => {
       if (pageParam) {
-        return chatApi.getOlderMessages(pageParam);
+        const messages = await chatApi.getOlderMessages(pageParam);
+        addMessages(messages);
+        return messages;
       }
-      return chatApi.getLatestMessages();
+      const messages = await chatApi.getLatestMessages();
+      addMessages(messages);
+      return messages;
     },
     getNextPageParam: (lastPage) => {
       if (lastPage.length < PAGE_SIZE) {
@@ -58,7 +69,11 @@ export const useChat = () => {
   const { data: participants = [], isLoading: isLoadingParticipants } =
     useQuery<Participant[]>({
       queryKey: ["participants"],
-      queryFn: chatApi.getAllParticipants,
+      queryFn: async () => {
+        const data = await chatApi.getAllParticipants();
+        setParticipants(data);
+        return data;
+      },
       enabled: !!sessionUuid,
       refetchInterval: 10000,
     });
@@ -145,8 +160,8 @@ export const useChat = () => {
   }, [queryClient, serverInfo?.sessionUuid, sessionUuid, setSessionUuid]);
 
   return {
-    messages: messagesData?.pages.flat() ?? [],
-    participants,
+    messages: messagesData?.pages.flat() ?? offlineMessages,
+    participants: participants.length > 0 ? participants : offlineParticipants,
     isLoading: isLoadingMessages || isLoadingParticipants,
     loadOlderMessages,
     sendMessage: sendMessageMutation.mutate,
