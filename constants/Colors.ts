@@ -264,21 +264,29 @@ const tintColorDark = "#fff";
 
 export const Colors = {
   light: {
-    text: "#11181C",
-    background: "#fff",
+    text: AppColors.gray[20],
+    background: AppColors.gray[1],
     tint: tintColorLight,
     icon: "#687076",
     tabIconDefault: "#687076",
     tabIconSelected: tintColorLight,
     headerBackground: AppColors.green[0],
+    messageInputBackground: AppColors.gray[0],
+    imageIcon: AppColors.gray[14],
+    messageInputPlaceholder: AppColors.gray[12],
+    messageInputShadow: AppColors.gray[20],
   },
   dark: {
-    text: "#ECEDEE",
-    background: "#151718",
+    text: AppColors.gray[0],
+    background: AppColors.gray[20],
     tint: tintColorDark,
     icon: "#9BA1A6",
     tabIconDefault: "#9BA1A6",
     tabIconSelected: tintColorDark,
     headerBackground: AppColors.gray[18],
+    messageInputBackground: AppColors.gray[14],
+    imageIcon: AppColors.gray[1],
+    messageInputPlaceholder: AppColors.gray[6],
+    messageInputShadow: AppColors.gray[5],
   },
 };

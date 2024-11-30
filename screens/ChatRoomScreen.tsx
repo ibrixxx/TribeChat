@@ -85,6 +85,7 @@ export const ChatRoomScreen = () => {
         )}
         onEndReached={handleLoadMore}
         onEndReachedThreshold={0.5}
+        contentContainerStyle={styles.contentContainer}
         inverted
         ListFooterComponent={isLoadingMore ? <ActivityIndicator /> : null}
         ItemSeparatorComponent={MessageSeparator}
@@ -117,6 +118,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  contentContainer: { paddingTop: 80 },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",

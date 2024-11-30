@@ -1,17 +1,22 @@
 import { useState } from "react";
-import { TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { TouchableOpacity, StyleSheet, Alert, Platform } from "react-native";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
-import { AppColors } from "@/constants/Colors";
+import { AppColors, Colors } from "@/constants/Colors";
 import { ThemedView } from "@/components/ui/themed/ThemedView";
 import { ThemedText } from "@/components/ui/themed/ThemedText";
 import { useChat } from "@/hooks/useChat";
-import { MentionInput } from "./MessageTextInput";
+import { MessageTextInput } from "./MessageTextInput";
+import Feather from "@expo/vector-icons/Feather";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useTheme } from "@/hooks/useTheme";
+import { LinearGradient } from "expo-linear-gradient";
 
 export const MessageInput = () => {
   const [text, setText] = useState("");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const { sendMessage, isSending, participants } = useChat();
+  const { theme } = useTheme();
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -46,12 +51,23 @@ export const MessageInput = () => {
       setText("");
       setSelectedImage(null);
     } catch (error) {
-      Alert.alert("Error", "Failed to send message. Please try again.");
+      Alert.alert(
+        "Error",
+        "Failed to send message. Please try again: " + error
+      );
     }
   };
 
   return (
-    <ThemedView style={styles.container}>
+    <ThemedView
+      style={[
+        styles.container,
+        {
+          backgroundColor: Colors[theme!].messageInputBackground,
+          shadowColor: Colors[theme!].messageInputShadow,
+        },
+      ]}
+    >
       {selectedImage && (
         <ThemedView style={styles.imagePreview}>
           <Image source={{ uri: selectedImage }} style={styles.previewImage} />
@@ -63,26 +79,36 @@ export const MessageInput = () => {
           </TouchableOpacity>
         </ThemedView>
       )}
-      <ThemedView style={styles.inputContainer}>
+      <ThemedView
+        style={[
+          styles.inputContainer,
+          { backgroundColor: Colors[theme!].messageInputBackground },
+        ]}
+      >
         <TouchableOpacity onPress={pickImage} style={styles.imageButton}>
-          <ThemedText>📷</ThemedText>
+          <Feather name="image" size={28} color={Colors[theme!].imageIcon} />
         </TouchableOpacity>
-        <MentionInput
-          value={text}
-          onChangeText={setText}
-          participants={participants}
-          onSend={handleSend}
-        />
+        <ThemedView style={styles.textInputWrapper}>
+          <MessageTextInput
+            value={text}
+            onChangeText={setText}
+            participants={participants}
+            onSend={handleSend}
+          />
+        </ThemedView>
         <TouchableOpacity
           onPress={handleSend}
           disabled={isSending || (!text.trim() && !selectedImage)}
-          style={[
-            styles.sendButton,
-            (isSending || (!text.trim() && !selectedImage)) &&
-              styles.sendButtonDisabled,
-          ]}
+          style={styles.sendButton}
         >
-          <ThemedText style={styles.sendButtonText}>Send</ThemedText>
+          <LinearGradient
+            colors={[AppColors.yellow[12], AppColors.lime[12]]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            style={styles.gradientButton}
+          >
+            <FontAwesome name="send-o" size={16} color="white" />
+          </LinearGradient>
         </TouchableOpacity>
       </ThemedView>
     </ThemedView>
@@ -92,12 +118,22 @@ export const MessageInput = () => {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderTopWidth: 1,
-    borderTopColor: AppColors.gray[5],
+    paddingVertical: 6,
+    position: "absolute",
+    bottom: Platform.OS === "ios" ? 24 : 16,
+    left: Platform.OS === "ios" ? 18 : 12,
+    right: Platform.OS === "ios" ? 18 : 12,
+    borderRadius: 20,
+    shadowOffset: {
+      width: 2,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
   },
   imagePreview: {
-    marginBottom: 5,
+    marginBottom: 8,
     position: "relative",
     width: 100,
     height: 100,
@@ -105,13 +141,13 @@ const styles = StyleSheet.create({
   previewImage: {
     width: "100%",
     height: "100%",
-    borderRadius: 8,
+    borderRadius: 12,
   },
   removeButton: {
     position: "absolute",
-    top: -10,
-    right: -10,
-    backgroundColor: AppColors.red[10],
+    top: -8,
+    right: -8,
+    backgroundColor: AppColors.gray[5],
     borderRadius: 12,
     width: 24,
     height: 24,
@@ -120,33 +156,28 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flexDirection: "row",
-    alignItems: "flex-end",
+    alignItems: "center",
+    gap: 8,
   },
   imageButton: {
-    padding: 10,
+    width: 44,
+    height: 44,
     justifyContent: "center",
+    alignItems: "center",
   },
-  input: {
+  textInputWrapper: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: AppColors.gray[5],
-    borderRadius: 20,
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    maxHeight: 100,
-    marginRight: 10,
+    minHeight: 44,
+    justifyContent: "center",
   },
   sendButton: {
-    backgroundColor: AppColors.blue[8],
     borderRadius: 20,
+    overflow: "hidden",
+  },
+  gradientButton: {
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingVertical: 12,
     justifyContent: "center",
-  },
-  sendButtonDisabled: {
-    backgroundColor: AppColors.gray[3],
-  },
-  sendButtonText: {
-    fontWeight: "bold",
+    alignItems: "center",
   },
 });

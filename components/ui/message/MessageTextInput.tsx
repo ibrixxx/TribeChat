@@ -11,26 +11,29 @@ import { ThemedText } from "../themed/ThemedText";
 import { Participant } from "@/types/chat";
 import { FlashList } from "@shopify/flash-list";
 import { ThemedView } from "@/components/ui/themed/ThemedView";
-import { AppColors } from "@/constants/Colors";
+import { AppColors, Colors } from "@/constants/Colors";
+import { useTheme } from "@/hooks/useTheme";
 
-interface MentionInputProps {
+interface MessageTextInputProps {
   value: string;
   onChangeText: (text: string) => void;
   participants: Participant[];
   onSend: () => void;
 }
 
-export const MentionInput = ({
+export const MessageTextInput = ({
   value,
   onChangeText,
   participants,
   onSend,
-}: MentionInputProps) => {
+}: MessageTextInputProps) => {
   const [mentionListVisible, setMentionListVisible] = useState(false);
   const [mentionQuery, setMentionQuery] = useState("");
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const inputRef = useRef<TextInput>(null);
   const cursorPosition = useRef<number>(0);
+
+  const { theme } = useTheme();
 
   useEffect(() => {
     const keyboardWillShow = Keyboard.addListener(
@@ -98,10 +101,21 @@ export const MentionInput = ({
       keyboardVerticalOffset={Platform.OS === "ios" ? 100 : 0}
       style={styles.container}
     >
-      <ThemedView style={styles.container}>
+      <ThemedView
+        style={[
+          styles.container,
+          { backgroundColor: Colors[theme!].messageInputBackground },
+        ]}
+      >
         {mentionListVisible && filteredParticipants.length > 0 && (
           <ThemedView
-            style={[styles.mentionList, { bottom: keyboardHeight + 50 }]}
+            style={[
+              styles.mentionList,
+              {
+                bottom: keyboardHeight + 50,
+                backgroundColor: Colors[theme!].messageInputBackground,
+              },
+            ]}
           >
             <FlashList
               data={filteredParticipants}
@@ -125,7 +139,8 @@ export const MentionInput = ({
           onChangeText={handleTextChange}
           onSelectionChange={handleSelectionChange}
           placeholder="Type a message..."
-          style={styles.input}
+          placeholderTextColor={Colors[theme!].messageInputPlaceholder}
+          style={[styles.input, { color: Colors[theme!].text }]}
           onSubmitEditing={onSend}
         />
       </ThemedView>
@@ -138,7 +153,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   input: {
-    maxHeight: 100,
     padding: 12,
     fontSize: 16,
     borderRadius: 20,
@@ -147,7 +161,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: 0,
     right: 0,
-    backgroundColor: "#fff",
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
     borderWidth: 1,
