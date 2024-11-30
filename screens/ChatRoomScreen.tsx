@@ -2,15 +2,46 @@ import { useState, useRef, useMemo, useCallback } from "react";
 import { StyleSheet, ActivityIndicator } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { useChat } from "@/hooks/useChat";
-import { MessageGroup } from "@/components/ui/message/MessageGroup";
 import { MessageInput } from "@/components/ui/message/MessageInput";
 import { ThemedView } from "@/components/ui/themed/ThemedView";
 import { groupMessages } from "@/utils/groupMessages";
+import MessageGroup from "@/components/ui/message/MessageGroup";
+import { BottomSheetModal } from "@gorhom/bottom-sheet";
+import { Participant, Reaction } from "@/types/chat";
+import { ChatParticipantsSheet } from "@/components/ui/sheet/ChatParticipantsSheet";
+import { MessageReactionSheet } from "@/components/ui/sheet/MessageReactionSheet";
+import ImageView from "react-native-image-viewing";
 
 export const ChatRoomScreen = () => {
   const { messages, participants, isLoading, loadOlderMessages } = useChat();
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const flashListRef = useRef(null);
+  const reactionSheetRef = useRef<BottomSheetModal>(null);
+  const participantSheetRef = useRef<BottomSheetModal>(null);
+  const [selectedReactions, setSelectedReactions] = useState<Reaction[]>([]);
+  const [selectedParticipant, setSelectedParticipant] =
+    useState<Participant | null>(null);
+
+  const [selectedImage, setSelectedImage] = useState<string | undefined>(
+    undefined
+  );
+
+  const handleImagePress = useCallback((imageUrl: string) => {
+    setSelectedImage(imageUrl);
+  }, []);
+
+  const handleReactionPress = useCallback((reactions: Reaction[]) => {
+    setSelectedReactions(reactions);
+    reactionSheetRef.current?.present();
+  }, []);
+
+  const handleParticipantPress = useCallback(
+    (participant: Participant) => {
+      setSelectedParticipant(participant);
+      participantSheetRef.current?.present();
+    },
+    [participantSheetRef]
+  );
 
   const handleLoadMore = useCallback(async () => {
     if (messages.length === 0 || isLoadingMore) return;
@@ -46,6 +77,9 @@ export const ChatRoomScreen = () => {
             participant={participants.find(
               (p) => p.uuid === item[0].authorUuid
             )}
+            onReactionPress={handleReactionPress}
+            onParticipantPress={handleParticipantPress}
+            onImagePress={handleImagePress}
           />
         )}
         onEndReached={handleLoadMore}
@@ -54,6 +88,25 @@ export const ChatRoomScreen = () => {
         ListFooterComponent={isLoadingMore ? <ActivityIndicator /> : null}
       />
       <MessageInput />
+
+      <ImageView
+        images={[{ uri: selectedImage }]}
+        imageIndex={0}
+        visible={selectedImage !== undefined}
+        onRequestClose={() => setSelectedImage(undefined)}
+        swipeToCloseEnabled={true}
+        doubleTapToZoomEnabled
+      />
+
+      <MessageReactionSheet
+        bottomSheetRef={reactionSheetRef}
+        reactions={selectedReactions}
+        participants={participants}
+      />
+      <ChatParticipantsSheet
+        bottomSheetRef={participantSheetRef}
+        participant={selectedParticipant}
+      />
     </ThemedView>
   );
 };

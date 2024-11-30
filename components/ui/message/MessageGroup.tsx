@@ -1,24 +1,32 @@
 import { memo } from "react";
-import { Image, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
+import {
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+  Pressable,
+} from "react-native";
 import moment from "moment";
 import { MessageJSON, Participant, Reaction } from "@/types/chat";
 import { AppColors } from "@/constants/Colors";
 import { ThemedView } from "@/components/ui/themed/ThemedView";
 import { ThemedText } from "@/components/ui/themed/ThemedText";
+import { Image } from "expo-image";
 
 interface MessageGroupProps {
   messages: MessageJSON[];
   participant: Participant | undefined;
-  onMessagePress?: (message: MessageJSON) => void;
-  onReactionPress?: (message: MessageJSON) => void;
+  onParticipantPress?: (participant: Participant) => void;
+  onReactionPress?: (reactions: Reaction[]) => void;
+  onImagePress?: (imageUrl: string) => void;
 }
 
-export const MessageGroup = memo(
+const MessageGroup = memo(
   ({
     messages,
     participant,
-    onMessagePress,
+    onParticipantPress,
     onReactionPress,
+    onImagePress,
   }: MessageGroupProps) => {
     if (!participant) return null;
 
@@ -35,7 +43,7 @@ export const MessageGroup = memo(
             <TouchableOpacity
               key={value}
               style={styles.reactionBadge}
-              onPress={() => onReactionPress?.(messages[0])}
+              onPress={() => onReactionPress?.(reactions)}
             >
               <ThemedText>{value}</ThemedText>
               <ThemedText style={styles.reactionCount}>{count}</ThemedText>
@@ -56,13 +64,12 @@ export const MessageGroup = memo(
 
       return (
         <TouchableOpacity
-          onPress={() => onMessagePress?.(message)}
+          onPress={() => onImagePress?.(image.url)}
           style={styles.imageContainer}
         >
           <Image
             source={{ uri: image.url }}
             style={[styles.image, { width: maxWidth, height }]}
-            resizeMode="cover"
           />
         </TouchableOpacity>
       );
@@ -82,36 +89,39 @@ export const MessageGroup = memo(
 
     return (
       <ThemedView style={styles.container}>
-        <ThemedView style={styles.header}>
+        <Pressable
+          onPress={() => onParticipantPress?.(participant)}
+          style={styles.header}
+        >
           <Image
             source={{ uri: participant.avatarUrl }}
             style={styles.avatar}
-            defaultSource={require("@/assets/images/giga.jpg")}
+            placeholder={require("@/assets/images/giga.jpg")}
           />
           <ThemedText style={styles.name}>{participant.name}</ThemedText>
-        </ThemedView>
+        </Pressable>
         {messages.map((message) => (
-          <TouchableOpacity
-            key={message.uuid}
-            style={styles.messageContainer}
-            onPress={() => onMessagePress?.(message)}
-          >
+          <ThemedView key={message.uuid} style={styles.messageContainer}>
             {renderReplyTo(message)}
             <ThemedText style={styles.message}>{message.text}</ThemedText>
             {renderImage(message)}
             {message.reactions.length > 0 && renderReactions(message.reactions)}
             <ThemedView style={styles.timestamp}>
-                <ThemedText >
-              {moment(message.sentAt).format("HH:mm")}
-              {message.updatedAt > message.sentAt && " (edited)"}
+              <ThemedText>
+                {moment(message.sentAt).format("HH:mm")}
+                {message.updatedAt > message.sentAt && " (edited)"}
               </ThemedText>
             </ThemedView>
-          </TouchableOpacity>
+          </ThemedView>
         ))}
       </ThemedView>
     );
   }
 );
+
+MessageGroup.displayName = "MessageGroup";
+
+export default MessageGroup;
 
 const styles = StyleSheet.create({
   container: {

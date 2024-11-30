@@ -1,11 +1,6 @@
 import { useState } from "react";
-import {
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Image,
-  Alert,
-} from "react-native";
+import { TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { AppColors } from "@/constants/Colors";
 import { ThemedView } from "@/components/ui/themed/ThemedView";

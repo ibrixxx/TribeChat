@@ -8,6 +8,8 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import ThemeContextProvider from "@/context/ThemeContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import MainStack from "@/routing/MainStack";
+import { PaperProvider } from "react-native-paper";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -33,8 +35,12 @@ export default function RootLayout() {
       <GestureHandlerRootView>
         <QueryClientProvider client={queryClient}>
           <ThemeContextProvider>
-            <MainStack />
-            <StatusBar style="auto" />
+            <PaperProvider>
+              <BottomSheetModalProvider>
+                <MainStack />
+                <StatusBar style="auto" />
+              </BottomSheetModalProvider>
+            </PaperProvider>
           </ThemeContextProvider>
         </QueryClientProvider>
       </GestureHandlerRootView>
