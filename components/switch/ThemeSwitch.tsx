@@ -1,4 +1,4 @@
-import { Pressable, TouchableHighlight, View, ViewProps } from "react-native";
+import { Pressable, ViewProps } from "react-native";
 import React from "react";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { AppColors } from "@/constants/Colors";

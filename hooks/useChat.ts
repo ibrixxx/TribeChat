@@ -60,7 +60,7 @@ export const useChat = () => {
       setSessionUuid(serverInfo?.sessionUuid || null);
       queryClient.invalidateQueries();
     }
-  }, [serverInfo?.sessionUuid]);
+  }, [queryClient, serverInfo?.sessionUuid, sessionUuid, setSessionUuid]);
 
   return {
     messages,

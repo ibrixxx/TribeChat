@@ -45,14 +45,16 @@ export const MessageText = ({ text, onMentionPress }: MessageTextProps) => {
 const styles = StyleSheet.create({
   baseText: {
     fontSize: 16,
+    fontWeight: "400",
     lineHeight: 20,
+    color: "white",
   },
   mentionContainer: {
     flexDirection: "row",
     alignItems: "center",
   },
   mention: {
-    color: AppColors.blue[8],
-    fontWeight: "500",
+    color: AppColors.orange[7],
+    fontWeight: "bold",
   },
 });

@@ -283,7 +283,7 @@ export const Colors = {
     icon: "#9BA1A6",
     tabIconDefault: "#9BA1A6",
     tabIconSelected: tintColorDark,
-    headerBackground: AppColors.gray[18],
+    headerBackground: AppColors.gray[14],
     messageInputBackground: AppColors.gray[14],
     imageIcon: AppColors.gray[1],
     messageInputPlaceholder: AppColors.gray[6],

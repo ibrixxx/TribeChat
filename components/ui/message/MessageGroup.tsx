@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   Dimensions,
   Pressable,
+  View,
 } from "react-native";
 import moment from "moment";
 import { MessageJSON, Participant, Reaction } from "@/types/chat";
@@ -12,6 +13,8 @@ import { ThemedView } from "@/components/ui/themed/ThemedView";
 import { ThemedText } from "@/components/ui/themed/ThemedText";
 import { Image } from "expo-image";
 import { MessageText } from "./MessageText";
+import { LinearGradient } from "expo-linear-gradient";
+import { Text } from "react-native";
 
 interface MessageGroupProps {
   messages: MessageJSON[];
@@ -87,9 +90,15 @@ const MessageGroup = memo(
         </ThemedView>
       );
     };
+    const isOwnMessage = participant.uuid === "you";
 
     return (
-      <ThemedView style={styles.container}>
+      <ThemedView
+        style={[
+          styles.container,
+          isOwnMessage ? styles.ownContainer : styles.otherContainer,
+        ]}
+      >
         <Pressable
           onPress={() => onParticipantPress?.(participant)}
           style={styles.header}
@@ -102,20 +111,50 @@ const MessageGroup = memo(
           <ThemedText style={styles.name}>{participant.name}</ThemedText>
         </Pressable>
         {messages.map((message) => (
-          <ThemedView key={message.uuid} style={styles.messageContainer}>
-            {renderReplyTo(message)}
-            <MessageText
-              text={message.text}
-              onMentionPress={onParticipantPress}
-            />
-            {renderImage(message)}
-            {message.reactions.length > 0 && renderReactions(message.reactions)}
-            <ThemedView style={styles.timestamp}>
-              <ThemedText>
-                {moment(message.sentAt).format("HH:mm")}
-                {message.updatedAt > message.sentAt && " (edited)"}
-              </ThemedText>
-            </ThemedView>
+          <ThemedView
+            key={message.uuid}
+            style={[
+              styles.messageContainer,
+              isOwnMessage
+                ? styles.ownMessageContainer
+                : styles.otherMessageContainer,
+            ]}
+          >
+            <LinearGradient
+              colors={
+                isOwnMessage
+                  ? [AppColors.lime[12], AppColors.lime[15]]
+                  : [AppColors.lightBlue[9], AppColors.blue[9]]
+              }
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={[
+                styles.messageBubble,
+                isOwnMessage
+                  ? styles.ownMessageBubble
+                  : styles.otherMessageBubble,
+              ]}
+            >
+              {renderReplyTo(message)}
+              <MessageText
+                text={message.text}
+                onMentionPress={onParticipantPress}
+              />
+              {renderImage(message)}
+              <View
+                style={[
+                  styles.timestamp,
+                  isOwnMessage ? styles.ownTimestamp : styles.otherTimestamp,
+                ]}
+              >
+                <Text style={styles.timestampText}>
+                  {moment(message.sentAt).format("HH:mm")}
+                  {message.updatedAt > message.sentAt && " (edited)"}
+                </Text>
+              </View>
+              {message.reactions.length > 0 &&
+                renderReactions(message.reactions)}
+            </LinearGradient>
           </ThemedView>
         ))}
       </ThemedView>
@@ -131,6 +170,12 @@ const styles = StyleSheet.create({
   container: {
     padding: 10,
     marginBottom: 5,
+  },
+  ownContainer: {
+    alignItems: "flex-end",
+  },
+  otherContainer: {
+    alignItems: "flex-start",
   },
   header: {
     flexDirection: "row",
@@ -148,35 +193,67 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   messageContainer: {
-    marginLeft: 40,
+    maxWidth: "80%",
     marginBottom: 2,
   },
-  message: {
-    fontSize: 16,
-    lineHeight: 20,
+  ownMessageContainer: {
+    marginLeft: 0,
+    marginRight: 0,
+  },
+  otherMessageContainer: {
+    marginLeft: 40,
+  },
+  messageBubble: {
+    padding: 12,
+    borderRadius: 20,
+  },
+  ownMessageBubble: {
+    borderTopRightRadius: 4,
+  },
+  otherMessageBubble: {
+    borderTopLeftRadius: 4,
   },
   timestamp: {
     fontSize: 12,
-    color: AppColors.gray[4],
-    marginTop: 2,
+    marginTop: 4,
+  },
+  ownTimestamp: {
+    alignSelf: "flex-end",
+  },
+  otherTimestamp: {
+    alignSelf: "flex-start",
+  },
+  timestampText: {
+    fontSize: 12,
+    color: AppColors.gray[2],
   },
   reactionsContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     marginTop: 4,
+    backgroundColor: "transparent",
   },
   reactionBadge: {
     flexDirection: "row",
-    backgroundColor: "#fff",
+    backgroundColor: AppColors.gray[10],
     borderRadius: 12,
     paddingHorizontal: 8,
     paddingVertical: 4,
     marginRight: 4,
     marginBottom: 4,
+    shadowOffset: {
+      width: 2,
+      height: 4,
+    },
+    shadowColor: AppColors.gray[16],
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 4,
   },
   reactionCount: {
     marginLeft: 4,
     fontSize: 12,
+    color: "white",
   },
   imageContainer: {
     marginTop: 8,
