@@ -1,4 +1,4 @@
-import { TouchableHighlight, View, ViewProps } from "react-native";
+import { Pressable, TouchableHighlight, View, ViewProps } from "react-native";
 import React from "react";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { AppColors } from "@/constants/Colors";
@@ -8,32 +8,30 @@ const ThemeSwitch = ({ ...props }: ViewProps) => {
   const { isDarkTheme, setTheme } = useTheme();
 
   return (
-    <View
+    <Pressable
       style={{
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
+        backgroundColor: isDarkTheme
+          ? AppColors.gray[12]
+          : AppColors.lightBlue[0],
+        padding: 4,
+        borderRadius: 20,
       }}
       {...props}
+      onPress={() => setTheme(isDarkTheme ? "light" : "dark")}
     >
-      <TouchableHighlight
-        onPress={() => setTheme(isDarkTheme ? "light" : "dark")}
-      >
-        {isDarkTheme ? (
-          <MaterialIcons
-            name="dark-mode"
-            size={24}
-            color={AppColors.gray[10]}
-          />
-        ) : (
-          <MaterialIcons
-            name="light-mode"
-            size={24}
-            color={AppColors.yellow[14]}
-          />
-        )}
-      </TouchableHighlight>
-    </View>
+      {isDarkTheme ? (
+        <MaterialIcons name="dark-mode" size={24} color={AppColors.gray[10]} />
+      ) : (
+        <MaterialIcons
+          name="light-mode"
+          size={24}
+          color={AppColors.yellow[15]}
+        />
+      )}
+    </Pressable>
   );
 };
 
