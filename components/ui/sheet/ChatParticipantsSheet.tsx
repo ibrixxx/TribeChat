@@ -15,8 +15,6 @@ export const ChatParticipantsSheet = ({
 }: ParticipantDetailsSheetProps) => {
   const snapPoints = useMemo(() => ["50%"], []);
 
-  console.log("rr: ", participant);
-
   if (!participant) return null;
 
   return (

@@ -11,6 +11,7 @@ import { AppColors } from "@/constants/Colors";
 import { ThemedView } from "@/components/ui/themed/ThemedView";
 import { ThemedText } from "@/components/ui/themed/ThemedText";
 import { Image } from "expo-image";
+import { MessageText } from "./MessageText";
 
 interface MessageGroupProps {
   messages: MessageJSON[];
@@ -103,7 +104,10 @@ const MessageGroup = memo(
         {messages.map((message) => (
           <ThemedView key={message.uuid} style={styles.messageContainer}>
             {renderReplyTo(message)}
-            <ThemedText style={styles.message}>{message.text}</ThemedText>
+            <MessageText
+              text={message.text}
+              onMentionPress={onParticipantPress}
+            />
             {renderImage(message)}
             {message.reactions.length > 0 && renderReactions(message.reactions)}
             <ThemedView style={styles.timestamp}>

@@ -1,16 +1,17 @@
 import { useState } from "react";
-import { TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { TouchableOpacity, StyleSheet, Alert } from "react-native";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import { AppColors } from "@/constants/Colors";
 import { ThemedView } from "@/components/ui/themed/ThemedView";
 import { ThemedText } from "@/components/ui/themed/ThemedText";
 import { useChat } from "@/hooks/useChat";
+import { MentionInput } from "./MessageTextInput";
 
 export const MessageInput = () => {
   const [text, setText] = useState("");
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const { sendMessage, isSending } = useChat();
+  const { sendMessage, isSending, participants } = useChat();
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -66,12 +67,11 @@ export const MessageInput = () => {
         <TouchableOpacity onPress={pickImage} style={styles.imageButton}>
           <ThemedText>📷</ThemedText>
         </TouchableOpacity>
-        <TextInput
-          style={styles.input}
+        <MentionInput
           value={text}
           onChangeText={setText}
-          placeholder="Type a message..."
-          multiline
+          participants={participants}
+          onSend={handleSend}
         />
         <TouchableOpacity
           onPress={handleSend}

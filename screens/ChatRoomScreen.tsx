@@ -11,6 +11,7 @@ import { Participant, Reaction } from "@/types/chat";
 import { ChatParticipantsSheet } from "@/components/ui/sheet/ChatParticipantsSheet";
 import { MessageReactionSheet } from "@/components/ui/sheet/MessageReactionSheet";
 import ImageView from "react-native-image-viewing";
+import MessageSeparator from "@/components/ui/message/MessageSeparator";
 
 export const ChatRoomScreen = () => {
   const { messages, participants, isLoading, loadOlderMessages } = useChat();
@@ -86,6 +87,7 @@ export const ChatRoomScreen = () => {
         onEndReachedThreshold={0.5}
         inverted
         ListFooterComponent={isLoadingMore ? <ActivityIndicator /> : null}
+        ItemSeparatorComponent={MessageSeparator}
       />
       <MessageInput />
 
