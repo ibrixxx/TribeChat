@@ -264,14 +264,16 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   replyContainer: {
+    backgroundColor: "transparent",
+    opacity: 0.9,
     borderLeftWidth: 4,
-    borderLeftColor: AppColors.blue[8],
+    borderLeftColor: AppColors.orange[8],
     padding: 8,
     marginBottom: 4,
     borderRadius: 4,
   },
   replyText: {
     fontSize: 14,
-    color: AppColors.gray[8],
+    color: AppColors.gray[1],
   },
 });

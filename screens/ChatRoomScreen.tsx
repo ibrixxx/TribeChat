@@ -16,13 +16,14 @@ import MessageSeparator from "@/components/ui/message/MessageSeparator";
 export const ChatRoomScreen = () => {
   const { messages, participants, isLoading, loadOlderMessages } = useChat();
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+
   const flashListRef = useRef(null);
   const reactionSheetRef = useRef<BottomSheetModal>(null);
   const participantSheetRef = useRef<BottomSheetModal>(null);
+
   const [selectedReactions, setSelectedReactions] = useState<Reaction[]>([]);
   const [selectedParticipant, setSelectedParticipant] =
     useState<Participant | null>(null);
-
   const [selectedImage, setSelectedImage] = useState<string | undefined>(
     undefined
   );
@@ -49,7 +50,7 @@ export const ChatRoomScreen = () => {
 
     setIsLoadingMore(true);
     try {
-      await loadOlderMessages(messages[messages.length - 1].uuid);
+      await loadOlderMessages(messages[0].uuid);
     } catch (error) {
       console.error("Error loading more messages:", error);
     }

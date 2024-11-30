@@ -4,6 +4,8 @@ import { BottomSheetModal, BottomSheetFlatList } from "@gorhom/bottom-sheet";
 import { Reaction, Participant } from "@/types/chat";
 import { ThemedText } from "../themed/ThemedText";
 import { ThemedView } from "../themed/ThemedView";
+import { Colors } from "@/constants/Colors";
+import { useTheme } from "@/hooks/useTheme";
 
 interface ReactionDetailsSheetProps {
   bottomSheetRef: RefObject<BottomSheetModal>;
@@ -18,6 +20,8 @@ export const MessageReactionSheet = ({
 }: ReactionDetailsSheetProps) => {
   const snapPoints = useMemo(() => ["60"], []);
 
+  const { theme } = useTheme();
+
   const renderItem = ({ item }: { item: Reaction }) => {
     const participant = participants.find(
       (p) => p.uuid === item.participantUuid
@@ -25,10 +29,10 @@ export const MessageReactionSheet = ({
 
     return (
       <ThemedView style={styles.reactionItem}>
-        <ThemedText style={styles.emoji}>{item.value}</ThemedText>
         <ThemedText style={styles.participantName}>
           {participant?.name || "Unknown"}
         </ThemedText>
+        <ThemedText style={styles.emoji}>{item.value}</ThemedText>
       </ThemedView>
     );
   };
@@ -38,7 +42,10 @@ export const MessageReactionSheet = ({
       ref={bottomSheetRef}
       index={1}
       snapPoints={snapPoints}
-      backgroundStyle={styles.bottomSheet}
+      backgroundStyle={[
+        styles.bottomSheet,
+        { backgroundColor: Colors[theme!].headerBackground },
+      ]}
       enablePanDownToClose
       enableDismissOnClose
     >
@@ -55,7 +62,6 @@ export const MessageReactionSheet = ({
 
 const styles = StyleSheet.create({
   bottomSheet: {
-    backgroundColor: "#fff",
     borderRadius: 24,
   },
   header: {
@@ -64,7 +70,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
   },
   content: {
     padding: 16,
@@ -72,7 +77,10 @@ const styles = StyleSheet.create({
   reactionItem: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
     paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 10,
   },
   emoji: {
     fontSize: 24,

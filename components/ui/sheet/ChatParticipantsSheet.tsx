@@ -3,6 +3,8 @@ import { Image, StyleSheet } from "react-native";
 import { BottomSheetModal, BottomSheetView } from "@gorhom/bottom-sheet";
 import { Participant } from "@/types/chat";
 import { ThemedText } from "../themed/ThemedText";
+import { useTheme } from "@/hooks/useTheme";
+import { Colors } from "@/constants/Colors";
 
 interface ParticipantDetailsSheetProps {
   bottomSheetRef: RefObject<BottomSheetModal>;
@@ -15,27 +17,30 @@ export const ChatParticipantsSheet = ({
 }: ParticipantDetailsSheetProps) => {
   const snapPoints = useMemo(() => ["50%"], []);
 
-  if (!participant) return null;
+  const { theme } = useTheme();
 
   return (
     <BottomSheetModal
       ref={bottomSheetRef}
-      index={1}
+      index={0}
       snapPoints={snapPoints}
-      backgroundStyle={styles.bottomSheet}
+      backgroundStyle={[
+        styles.bottomSheet,
+        { backgroundColor: Colors[theme!].headerBackground },
+      ]}
     >
       <BottomSheetView style={styles.content}>
-        <Image source={{ uri: participant.avatarUrl }} style={styles.avatar} />
-        <ThemedText style={styles.name}>{participant.name}</ThemedText>
-        {participant.jobTitle && (
+        <Image source={{ uri: participant?.avatarUrl }} style={styles.avatar} />
+        <ThemedText style={styles.name}>{participant?.name}</ThemedText>
+        {participant?.jobTitle && (
           <ThemedText style={styles.jobTitle}>
             {participant.jobTitle}
           </ThemedText>
         )}
-        {participant.bio && (
+        {participant?.bio && (
           <ThemedText style={styles.bio}>{participant.bio}</ThemedText>
         )}
-        {participant.email && (
+        {participant?.email && (
           <ThemedText style={styles.email}>{participant.email}</ThemedText>
         )}
       </BottomSheetView>
@@ -45,7 +50,6 @@ export const ChatParticipantsSheet = ({
 
 const styles = StyleSheet.create({
   bottomSheet: {
-    backgroundColor: "#fff",
     borderRadius: 24,
   },
   content: {
@@ -65,17 +69,14 @@ const styles = StyleSheet.create({
   },
   jobTitle: {
     fontSize: 16,
-    color: "#666",
     marginBottom: 16,
   },
   bio: {
     fontSize: 14,
     textAlign: "center",
     marginBottom: 16,
-    color: "#444",
   },
   email: {
     fontSize: 14,
-    color: "#666",
   },
 });
