@@ -50,7 +50,7 @@ export const ChatRoomScreen = () => {
 
     setIsLoadingMore(true);
     try {
-      await loadOlderMessages(messages[0].uuid);
+      await loadOlderMessages();
     } catch (error) {
       console.error("Error loading more messages:", error);
     }
